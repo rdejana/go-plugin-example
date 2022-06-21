@@ -1,1 +1,24 @@
-# UBI 8 based build
+# UBI 8 min  based build
+FROM registry.access.redhat.com/ubi8/ubi-minimal as builder
+# FROM registry.access.redhat.com/ubi8/ubi-micro
+
+RUN microdnf install go
+
+RUN go version
+
+COPY . /app
+WORKDIR /app
+# RUN ls -li
+RUN go mod tidy
+RUN go build -buildmode=plugin -o eng/eng.so eng/greeter.go
+RUN go build -buildmode=plugin -o chi/chi.so chi/greeter.go
+RUN go build -o greetings .
+RUN echo "All done. You may now run './greetings english' or './greetings chinese'"
+
+FROM registry.access.redhat.com/ubi8/ubi-minimal
+WORKDIR /app
+RUN mkdir eng chi
+COPY --from=builder /app/greetings .
+COPY --from=builder /app/eng/eng.so eng/eng.so
+COPY --from=builder /app/chi/chi.so chi/chi.so
+RUN echo "All done. You may now run './greetings english' or './greetings chinese'"
