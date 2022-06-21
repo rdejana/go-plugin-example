@@ -1,5 +1,6 @@
 This is a forked repo for playing with Go's plugin support.  It has been updated to support modules and added a few dockerfiles 
 for testing.  This shows that with alpine, go, and ARM that leads to a seg fault.  Neither Ubuntu or RH UBI8 show this issue.
+Using this as a means to help build a version of Krakend for ARM linux.
 
 # Go Plugin Example
 
