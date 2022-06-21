@@ -1,6 +1,5 @@
 # Ubuntu based build
-FROM ubuntu:20.04
-
+FROM ubuntu:20.04 as builder
 
 ENV GOLANG_VERSION 1.17.11
 ENV ARCH=amd64
@@ -23,4 +22,12 @@ RUN go mod tidy
 RUN go build -buildmode=plugin -o eng/eng.so eng/greeter.go
 RUN go build -buildmode=plugin -o chi/chi.so chi/greeter.go
 RUN go build -o greetings .
+# RUN echo "All done. You may now run './greetings english' or './greetings chinese'"
+
+FROM ubuntu:20.04
+WORKDIR /app
+RUN mkdir eng chi
+COPY --from=builder /app/greetings .
+COPY --from=builder /app/eng/eng.so eng/eng.so
+COPY --from=builder /app/chi/chi.so chi/chi.so
 RUN echo "All done. You may now run './greetings english' or './greetings chinese'"

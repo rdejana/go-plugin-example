@@ -17,6 +17,7 @@ RUN echo "All done. You may now run './greetings english' or './greetings chines
 
 FROM registry.access.redhat.com/ubi8/ubi-minimal
 WORKDIR /app
+RUN microdnf clean all
 RUN mkdir eng chi
 COPY --from=builder /app/greetings .
 COPY --from=builder /app/eng/eng.so eng/eng.so
